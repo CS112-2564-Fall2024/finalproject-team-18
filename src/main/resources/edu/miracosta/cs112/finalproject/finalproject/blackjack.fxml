@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.Scene?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.text.Font?>
-<?import javafx.stage.Stage?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.stage.*?>
 
-<Stage xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+<Stage xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
     <scene>
         <Scene>
             <AnchorPane prefHeight="848.0" prefWidth="606.0">
@@ -19,11 +16,6 @@
                      <Font size="40.0" />
                   </font>
                </Label>
-               <ImageView fitHeight="383.0" fitWidth="336.0" layoutX="135.0" layoutY="191.0" pickOnBounds="true" preserveRatio="true">
-                  <image>
-                     <Image url="@../../../../../../../../../../Pictures/Screenshots/Screenshot%202024-11-27%20132957.png" />
-                  </image>
-               </ImageView>
                <Button layoutX="171.0" layoutY="632.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="265.0" text="Start Game">
                   <font>
                      <Font size="30.0" />
