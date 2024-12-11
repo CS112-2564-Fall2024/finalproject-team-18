@@ -11,7 +11,7 @@ public class PlayGame extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/edu/miracosta/cs112/finalproject/finalproject/BlackjackTableDesign4CSFinalProj2024(Placeholders).fxml"));
+        FXMLLoader loader = new FXMLLoader(PlayGame.class.getResource("BlackJackTableComplete-5.fxml"));
         primaryStage.setTitle("Blackjack Game");
         primaryStage.setScene(new Scene(loader.load()));
         primaryStage.show();
