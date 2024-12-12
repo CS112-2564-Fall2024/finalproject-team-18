@@ -10,6 +10,16 @@ import java.util.List;
 
 public class BlackjackController {
     @FXML
+    private Button LeaveTable;
+    @FXML
+    private Button DoubleDown;
+    @FXML
+    private Button Bet;
+    @FXML
+    private Button Hit;
+    @FXML
+    private Button Stand;
+    @FXML
     private Button startGame;
     @FXML
     private ImageView PlayerCard1, PlayerCard2, PlayerCard3, PlayerCard4;
