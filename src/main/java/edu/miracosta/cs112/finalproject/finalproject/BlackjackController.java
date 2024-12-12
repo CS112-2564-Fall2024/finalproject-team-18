@@ -1,6 +1,7 @@
 package edu.miracosta.cs112.finalproject.finalproject;
 
 //imports
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -11,13 +12,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javafx.application.Platform;
 
 //Class
 public class BlackjackController {
 
     //FXML's
     @FXML
-    private Button NewGame;
+    private Button DealCards;
     @FXML
     private Button Balance;
     @FXML
@@ -33,7 +35,9 @@ public class BlackjackController {
     @FXML
     private Button Stand;
     @FXML
-    private Button startGame;
+    private Button NewGame;
+    //@FXML
+    //private Button startGame;
     @FXML
     private ImageView PlayerCard1, PlayerCard2, PlayerCard3, PlayerCard4;
     @FXML
@@ -71,38 +75,58 @@ public class BlackjackController {
         deck.shuffle();
         player = new Player("Player 1", 1000);
         dealerHand = new ArrayList<>();
+
+        //Disable all buttons except for the "Bet" button
+        setButtonState(false);
+        Bet.setDisable(false);
+        LeaveTable.setDisable(false);
     }
 
-    //Deal the cards
+    //CUSTOM EXCEPTION
     @FXML
     public void dealCards() {
-        if (deck.isEmpty()) {
-            System.out.println("Deck is empty! Reshuffling.");
-            deck = new Deck();
-            deck.shuffle();
+        Hit.setDisable(false);
+        Stand.setDisable(false);
+        DoubleDown.setDisable(false);
+        try {
+            if (player.getBalance() < 0) {
+                throw new BlackjackException("Insufficient balance to place a bet.");
+            }
+
+            // Deal cards logic
+            if (deck.isEmpty()) {
+                System.out.println("Deck is empty! Reshuffling.");
+                deck = new Deck();
+                deck.shuffle();
+            }
+
+            // Deal two cards to player and dealer
+            Card playerCard1 = deck.dealCard();
+            Card playerCard2 = deck.dealCard();
+            Card dealerCard1 = deck.dealCard();
+            Card dealerCard2 = deck.dealCard();
+
+            // Add cards to hands
+            player.addCardToHand(playerCard1);
+            player.addCardToHand(playerCard2);
+            dealerHand.add(dealerCard1);
+            dealerHand.add(dealerCard2);
+
+            // Set images for player's cards
+            PlayerCard1.setImage(getCardImage(playerCard1));
+            PlayerCard2.setImage(getCardImage(playerCard2));
+
+            // Set images for dealer's cards (one face down)
+            DealerCard1.setImage(getCardImage(dealerCard1));
+            DealerCard2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Pictures/SingleFaceDownCard.jpg"))));
+
+            // Enable other buttons, disable "Bet"
+            setButtonState(true);
+            Bet.setDisable(true);
+        } catch (BlackjackException e) {
+            System.out.println(e.getMessage());
+            showAlert("Error", e.getMessage());
         }
-
-        // Deal two cards to player and dealer
-        Card playerCard1 = deck.dealCard();
-        Card playerCard2 = deck.dealCard();
-        Card dealerCard1 = deck.dealCard();
-        Card dealerCard2 = deck.dealCard();
-
-        // Add cards to hands
-        player.addCardToHand(playerCard1);
-        player.addCardToHand(playerCard2);
-        dealerHand.add(dealerCard1);
-        dealerHand.add(dealerCard2);
-
-        // Set images for player's cards
-        PlayerCard1.setImage(getCardImage(playerCard1));
-        PlayerCard2.setImage(getCardImage(playerCard2));
-
-        // Set images for dealer's cards (one face down)
-        DealerCard1.setImage(getCardImage(dealerCard1));
-        DealerCard2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Pictures/SingleFaceDownCard.jpg"))));
-        // Clear unused card slots
-        clearRemainingCards();
     }
 
     //Program finding image
@@ -125,15 +149,13 @@ public class BlackjackController {
         DealerCard4.setImage(null);
     }
 
-    //hit logic for player
     @FXML
     public void hit() {
         // Deal a new card
         Card newCard = deck.dealCard();
         player.addCardToHand(newCard);
 
-        // Use 3rd and 4th card slot
-        //Statement for if max slots used
+        // Update UI
         if (PlayerCard3.getImage() == null) {
             PlayerCard3.setImage(getCardImage(newCard));
         } else if (PlayerCard4.getImage() == null) {
@@ -142,13 +164,65 @@ public class BlackjackController {
             System.out.println("Maximum cards reached for the player.");
         }
 
-        // Make sure player doesn't bust
-        //If the player busts, end the game
+        // Disable Double Down button after Hit
+        DoubleDown.setDisable(true);
+
+        // Check if player busts
         int playerHandValue = player.calculateHandValue();
         if (playerHandValue > 21) {
             System.out.println("Player busts! Dealer wins.");
             showBustMessage();
             endGame();
+        }
+    }
+
+    //Initial bet
+    @FXML
+    public void bet(ActionEvent event) {
+        // Deduct $200 from the player's balance and enable other buttons.
+        player.adjustBalance(-200);
+        updateBalanceLabel(); // Update the balance display
+        setButtonState(true); // Enable other buttons
+        Bet.setDisable(true); // Disable the Bet button
+        Balance.setDisable(false);
+        DealCards.setDisable(false);
+        NewGame.setDisable(false);
+        Hit.setDisable(true);
+        Stand.setDisable(true);
+        DoubleDown.setDisable(true);
+        System.out.println("Bet placed. $200 deducted from balance.");
+    }
+
+    @FXML
+    public void doubleDown() {
+        try {
+            if (player.getBalance() < 200) {
+                throw new BlackjackException("Insufficient balance to Double Down.");
+            }
+
+            // Deduct $200 from balance
+            player.adjustBalance(-200);
+            updateBalanceLabel(); // Update the balance display
+
+            // Deal one card to the player
+            Card newCard = deck.dealCard();
+            player.addCardToHand(newCard);
+
+            // Update UI
+            if (PlayerCard3.getImage() == null) {
+                PlayerCard3.setImage(getCardImage(newCard));
+            } else if (PlayerCard4.getImage() == null) {
+                PlayerCard4.setImage(getCardImage(newCard));
+            }
+
+            // Disable Double Down button
+            DoubleDown.setDisable(true);
+
+            // Proceed to dealer's turn
+            stand();
+        } catch (BlackjackException e) {
+            System.out.println(e.getMessage());
+            showAlert("Error", e.getMessage());
         }
     }
 
@@ -181,7 +255,15 @@ public class BlackjackController {
         // Make sure buttons are activated
         deck = new Deck();
         deck.shuffle();
-        setButtonState(true);
+        //setButtonState(true);
+        Hit.setDisable(true);
+        Stand.setDisable(true);
+        DoubleDown.setDisable(true);
+        DealCards.setDisable(true);
+        Balance.setDisable(true);
+
+        Bet.setDisable(false);
+        //LeaveTable.setDisable(false);
 
         System.out.println("Game has been reset. Start a new round!");
     }
@@ -263,7 +345,9 @@ public class BlackjackController {
         alert.showAndWait();
     }
 
-    //Determine winner logic and give message
+    // Track whether the player doubled down
+    private boolean doubledDown = false;
+
     private void determineWinner() {
         int playerValue = player.calculateHandValue();
         int dealerValue = getDealerHandValue();
@@ -273,10 +357,26 @@ public class BlackjackController {
             showGameOverMessage("You lose! Player busted.");
         } else if (dealerValue > 21) {
             System.out.println("Dealer busts! Player wins.");
-            showGameOverMessage("You win! Dealer busted.");
+            if (doubledDown) {
+                player.adjustBalance(800); // Add $800 if doubled down
+                updateBalanceLabel();
+                showGameOverMessage("You win! Dealer busted. $800 added to your balance.");
+            } else {
+                player.adjustBalance(400); // Add $400 for a normal win
+                updateBalanceLabel();
+                showGameOverMessage("You win! Dealer busted. $400 added to your balance.");
+            }
         } else if (playerValue > dealerValue) {
             System.out.println("Player wins!");
-            showGameOverMessage("You win! Your hand is better.");
+            if (doubledDown) {
+                player.adjustBalance(800); // Add $800 if doubled down
+                updateBalanceLabel();
+                showGameOverMessage("You win! Your hand is better. $800 added to your balance.");
+            } else {
+                player.adjustBalance(400); // Add $400 for a normal win
+                updateBalanceLabel();
+                showGameOverMessage("You win! Your hand is better. $400 added to your balance.");
+            }
         } else if (dealerValue > playerValue) {
             System.out.println("Dealer wins!");
             showGameOverMessage("You lose! Dealer's hand is better.");
@@ -284,19 +384,30 @@ public class BlackjackController {
             System.out.println("It's a tie!");
             showGameOverMessage("It's a tie!");
         }
+
+        // Reset the doubledDown flag for the next round
+        doubledDown = false;
+
         // Reset game
         endGame();
     }
 
+    private void updateBalanceLabel() {
+        if (balanceLabel != null) {
+            balanceLabel.setText("Balance: $" + player.getBalance());
+        } else {
+            System.out.println("Balance Label is not initialized.");
+        }
+    }
+
     //Make sure buttons are enabled
     private void setButtonState(boolean enable) {
+
         Hit.setDisable(!enable);
         Stand.setDisable(!enable);
         DoubleDown.setDisable(!enable);
-        Bet.setDisable(!enable);
     }
 
-    //Start the next round
     @FXML
     public void startNextRound() {
         clearRemainingCards();
@@ -311,8 +422,24 @@ public class BlackjackController {
         player.clearHand();
         dealerHand.clear();
 
-        setButtonState(true);
+        // Reset buttons
+        setButtonState(false); // Disable all buttons
+        Bet.setDisable(false); // Enable "Bet"
 
         System.out.println("New round started!");
+    }
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    @FXML
+    public void leaveTable() {
+        System.out.println("Exiting the game. Thank you for playing!");
+        Platform.exit();
+        System.exit(0); // Ensure the program exits completely
     }
 }
