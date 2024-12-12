@@ -48,6 +48,11 @@ public class Deck {
         return cards.size();
     }
 
+    public boolean isEmpty() {
+        return cards.isEmpty();
+    }
+
+
     //Inner Class!!!
     //Keeps track of card statistics
     public class CardCounter {

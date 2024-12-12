@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +72,40 @@ public class BlackjackController {
 
     @FXML
     public void dealCards() {
+        if (deck.isEmpty()) {
+            System.out.println("Deck is empty! Reshuffling.");
+            deck = new Deck();
+            deck.shuffle();
+        }
+
         // Deal two cards to player and dealer
+        Card playerCard1 = deck.dealCard();
+        Card playerCard2 = deck.dealCard();
+        Card dealerCard1 = deck.dealCard();
+        Card dealerCard2 = deck.dealCard();
+
+        // Add cards to hands
+        player.addCardToHand(playerCard1);
+        player.addCardToHand(playerCard2);
+        dealerHand.add(dealerCard1);
+        dealerHand.add(dealerCard2);
+
+        // Set images for player's cards
+        PlayerCard1.setImage(getCardImage(playerCard1));
+        PlayerCard2.setImage(getCardImage(playerCard2));
+
+        // Set images for dealer's cards (one face down)
+        DealerCard1.setImage(getCardImage(dealerCard1));
+        DealerCard2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("Pictures/SingleFaceDownCard.jpg"))));
+
+        // Clear unused card slots
+        clearRemainingCards();
+    }
+
+    /*
+    // Deal two cards to player and dealer
+    @FXML
+    public void dealCards() {
         Card playerCard1 = deck.dealCard();
         Card playerCard2 = deck.dealCard();
         Card dealerCard1 = deck.dealCard();
@@ -90,16 +124,42 @@ public class BlackjackController {
 
         // Set images for dealer's cards (one face down)
         DealerCard1.setImage(getCardImage(dealerCard1));
-        DealerCard2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("SingleFaceDownCard.jpg"))));
+        DealerCard2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("Pictures/SingleFaceDownCard.jpg"))));
+        //DealerCard2.setImage(new Image(getClass().getResourceAsStream("Pictures/SingleFaceDownCard.jpg")));
 
         // Clear unused card slots
         clearRemainingCards();
     }
+    */
 
     private Image getCardImage(Card card) {
-        String cardName = card.getValue().toLowerCase() + "_of_" + card.getSuit().toLowerCase();
-        return new Image(Objects.requireNonNull(getClass().getResourceAsStream(cardName + ".png")));
+        String cardName = card.getValue().toLowerCase() + "_of_" + card.getSuit().toLowerCase() + ".jpg";
+        String imagePath = "src/main/resources/Cards/" + cardName;
+        InputStream imageStream = getClass().getResourceAsStream(imagePath);
+        if (imageStream == null) {
+            throw new RuntimeException("Image not found: " + imagePath);
+        }
+        return new Image(imageStream);
     }
+
+    /*
+    //png changed to jpg
+    private Image getCardImage(Card card) {
+        String cardName = card.getValue().toLowerCase() + "_of_" + card.getSuit().toLowerCase() + ".jpg";
+        String imagePath = "src/main/resources/Cards/" + cardName; // Adjust path?
+        return new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath), "Image not found: " + imagePath));
+    }
+    */
+
+    /*
+    private Image getCardImage(Card card) {
+        String cardName = card.getValue() + "_of_" + card.getSuit();
+        //return new Image(Objects.requireNonNull(BlackjackController.class.getResourceAsStream("src/main/resources/Pictures/" + cardName + ".png")));
+        //return new Image(BlackjackController.class.getResourceAsStream("Pictures" + cardName + ".png"));
+        return new Image(BlackjackController.class.getResourceAsStream("src/main/resources" + cardName));
+    }
+    */
+
 
     //Clear card slots
     @FXML

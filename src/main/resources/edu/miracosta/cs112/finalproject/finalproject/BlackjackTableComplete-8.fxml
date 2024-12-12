@@ -45,7 +45,7 @@
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="673.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.miracosta.cs112.finalproject.finalproject.BlackjackController">
    <children>
-      <Button fx:id="StartGame" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="99.0" text="StartGame" textAlignment="CENTER" />
+      <Button fx:id="StartGame" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="99.0" text="StartGame" textAlignment="CENTER" onAction="#dealCards"/>
       <ImageView fitHeight="356.0" fitWidth="531.0" layoutX="35.0" layoutY="142.0" pickOnBounds="true" preserveRatio="true" rotate="90.0">
          <image>
             <Image url="@../../../../../Pictures/BlackJackTableForCSProj2024.jpg" />

@@ -7,6 +7,17 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+// Core Class - Card class
+// Abstract Class - Participant
+// Inner Class - Card Counter inside deck class
+// Inheritance/Polymorphism - Player and Dealer extends Participant
+// Custom Exception -
+// Javadoc Core Class -
+// UML Design
+// GUI Interface
+// User Experience
+
+
 public class PlayGame extends Application {
 
     @Override
