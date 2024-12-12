@@ -96,8 +96,7 @@ public class BlackjackController {
 
         // Set images for dealer's cards (one face down)
         DealerCard1.setImage(getCardImage(dealerCard1));
-        DealerCard2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("Pictures/SingleFaceDownCard.jpg"))));
-
+        DealerCard2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Pictures/SingleFaceDownCard.jpg"))));
         // Clear unused card slots
         clearRemainingCards();
     }
