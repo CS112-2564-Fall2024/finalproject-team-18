@@ -134,7 +134,7 @@ public class BlackjackController {
 
     private Image getCardImage(Card card) {
         String cardName = card.getValue().toLowerCase() + "_of_" + card.getSuit().toLowerCase() + ".jpg";
-        String imagePath = "src/main/resources/Cards/" + cardName;
+        String imagePath = "/Cards/" + cardName;
         InputStream imageStream = getClass().getResourceAsStream(imagePath);
         if (imageStream == null) {
             throw new RuntimeException("Image not found: " + imagePath);
