@@ -41,6 +41,8 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.Pane?>
 
+
+
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="673.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="edu.miracosta.cs112.finalproject.finalproject.BlackjackController">
    <children>
       <Button fx:id="StartGame" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="99.0" text="StartGame" textAlignment="CENTER" />
@@ -49,7 +51,9 @@
             <Image url="@../../../../../Pictures/BlackJackTableForCSProj2024.jpg" />
          </image>
       </ImageView>
-      <Button fx:id="Balance" layoutX="478.0" layoutY="14.0" mnemonicParsing="false" prefHeight="37.0" prefWidth="99.0" text="Balance" textAlignment="CENTER" />
+      <Button fx:id="Balance" layoutX="478.0" layoutY="14.0" mnemonicParsing="false"
+              prefHeight="37.0" prefWidth="99.0" text="Balance"
+              onAction="#showBalance" />
       <ImageView fitHeight="65.0" fitWidth="209.0" layoutX="196.0" layoutY="54.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../../../../../Pictures/DealerPokerChipsCSFinalProj2024-2.jpg" />

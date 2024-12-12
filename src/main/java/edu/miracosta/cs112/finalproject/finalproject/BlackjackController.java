@@ -1,14 +1,24 @@
 package edu.miracosta.cs112.finalproject.finalproject;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class BlackjackController {
+
+    @FXML
+    private Button StartGame;
+    @FXML
+    private Button Balance;
+    @FXML
+    private Label balanceLabel;
     @FXML
     private Button LeaveTable;
     @FXML
@@ -30,11 +40,32 @@ public class BlackjackController {
     private Player player;
     private List<Card> dealerHand;
 
+    //Display the player's balance
+    @FXML
+    public void showBalance() {
+        String balanceMessage = "Your current balance is: $" + player.getBalance();
+        System.out.println(balanceMessage);
+
+        //Update a label in the UI
+        if (balanceLabel != null) {
+            balanceLabel.setText(balanceMessage);
+        } else {
+            //Popup
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Player Balance");
+            alert.setHeaderText("Current Balance");
+            alert.setContentText(balanceMessage);
+            alert.showAndWait();
+        }
+    }
+
+    //Create and shuffle deck
+    //Create player and give a starting balance
     @FXML
     public void initialize() {
         deck = new Deck();
         deck.shuffle();
-        player = new Player("Player 1", 1000); // Example player with a default balance
+        player = new Player("Player 1", 1000);
         dealerHand = new ArrayList<>();
     }
 
@@ -59,7 +90,7 @@ public class BlackjackController {
 
         // Set images for dealer's cards (one face down)
         DealerCard1.setImage(getCardImage(dealerCard1));
-        DealerCard2.setImage(new Image(getClass().getResourceAsStream("SingleFaceDownCard.jpg")));
+        DealerCard2.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream("SingleFaceDownCard.jpg"))));
 
         // Clear unused card slots
         clearRemainingCards();
@@ -67,7 +98,7 @@ public class BlackjackController {
 
     private Image getCardImage(Card card) {
         String cardName = card.getValue().toLowerCase() + "_of_" + card.getSuit().toLowerCase();
-        return new Image(getClass().getResourceAsStream(cardName + ".png"));
+        return new Image(Objects.requireNonNull(getClass().getResourceAsStream(cardName + ".png")));
     }
 
     //Clear card slots
