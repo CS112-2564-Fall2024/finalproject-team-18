@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.stage.*?>
+
+<Stage xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+    <scene>
+        <Scene>
+            <AnchorPane prefHeight="848.0" prefWidth="606.0">
+            <children>
+               <Label alignment="CENTER" layoutX="93.0" layoutY="14.0" prefHeight="222.0" prefWidth="420.0" text="Welcome to Blackjack!">
+                  <font>
+                     <Font size="40.0" />
+                  </font>
+               </Label>
+               <Button layoutX="171.0" layoutY="632.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="265.0" text="Start Game">
+                  <font>
+                     <Font size="30.0" />
+                  </font>
+               </Button>
+               <Button layoutX="171.0" layoutY="716.0" mnemonicParsing="false" prefHeight="64.0" prefWidth="265.0" text="Leave Game">
+                  <font>
+                     <Font size="30.0" />
+                  </font>
+               </Button>
+            </children></AnchorPane>
+        </Scene>
+    </scene>
+</Stage>
