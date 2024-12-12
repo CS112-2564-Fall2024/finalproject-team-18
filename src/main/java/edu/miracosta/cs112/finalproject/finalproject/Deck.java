@@ -1,13 +1,13 @@
 package edu.miracosta.cs112.finalproject.finalproject;
 
 //Shuffles and deals cards
-
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.List;
 
 public class Deck {
 
+    //Card array and random for shuffling
     private List<Card> cards;
     private Random random;
 
@@ -36,6 +36,7 @@ public class Deck {
         cards = shuffled;
     }
 
+    //If the deck is empty
     public Card dealCard() {
         if (cards.isEmpty()) {
             throw new IllegalStateException("Deck is empty");
@@ -47,13 +48,15 @@ public class Deck {
         return cards.size();
     }
 
-    @Override
-    public String toString() {
-        String result = "Deck contains: \n";
-        for (Card card : cards) {
-            result += card + "\n";
+    //Inner Class!!!
+    //Keeps track of card statistics
+    public class CardCounter {
+        public int countRemainingCards() {
+            return cards.size();
         }
-        return result;
-    }
 
+        public boolean isDeckEmpty() {
+            return cards.isEmpty();
+        }
+    }
 }
