@@ -49,14 +49,23 @@ public class Player extends Participant {
         for (Card card : hand) {
             int cardValue = switch (card.getValue()) {
                 case "Ace" -> 11;
-                case "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten" -> Integer.parseInt(card.getValue().substring(0, 1));
-                case "Jack", "Queen", "King" -> 10;
-                default -> throw new IllegalStateException("Invalid card value");
+                case "Two" -> 2;
+                case "Three" -> 3;
+                case "Four" -> 4;
+                case "Five" -> 5;
+                case "Six" -> 6;
+                case "Seven" -> 7;
+                case "Eight" -> 8;
+                case "Nine" -> 9;
+                case "Ten", "Jack", "Queen", "King" -> 10;
+                default -> throw new IllegalStateException("Invalid card value: " + card.getValue());
             };
+
             handValue += cardValue;
             if (cardValue == 11) aceCount++;
         }
 
+        // Adjust for Aces if the hand value exceeds 21
         while (handValue > 21 && aceCount > 0) {
             handValue -= 10;
             aceCount--;
@@ -64,4 +73,5 @@ public class Player extends Participant {
 
         return handValue;
     }
+
 }

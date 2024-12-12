@@ -1,19 +1,21 @@
 package edu.miracosta.cs112.finalproject.finalproject;
 
+//imports
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+//Class
 public class BlackjackController {
 
+    //FXML's
     @FXML
     private Button NewGame;
     @FXML
@@ -37,6 +39,7 @@ public class BlackjackController {
     @FXML
     private ImageView DealerCard1, DealerCard2, DealerCard3, DealerCard4;
 
+    //Deck, Player, Array
     private Deck deck;
     private Player player;
     private List<Card> dealerHand;
@@ -70,6 +73,7 @@ public class BlackjackController {
         dealerHand = new ArrayList<>();
     }
 
+    //Deal the cards
     @FXML
     public void dealCards() {
         if (deck.isEmpty()) {
@@ -101,6 +105,7 @@ public class BlackjackController {
         clearRemainingCards();
     }
 
+    //Program finding image
     private Image getCardImage(Card card) {
         String cardName = card.getValue().toLowerCase() + "_of_" + card.getSuit().toLowerCase() + ".jpg";
         String imagePath = "/Cards/" + cardName;
@@ -120,12 +125,15 @@ public class BlackjackController {
         DealerCard4.setImage(null);
     }
 
-    //Hit logic
+    //hit logic for player
     @FXML
     public void hit() {
+        // Deal a new card
         Card newCard = deck.dealCard();
         player.addCardToHand(newCard);
 
+        // Use 3rd and 4th card slot
+        //Statement for if max slots used
         if (PlayerCard3.getImage() == null) {
             PlayerCard3.setImage(getCardImage(newCard));
         } else if (PlayerCard4.getImage() == null) {
@@ -133,28 +141,75 @@ public class BlackjackController {
         } else {
             System.out.println("Maximum cards reached for the player.");
         }
+
+        // Make sure player doesn't bust
+        //If the player busts, end the game
+        int playerHandValue = player.calculateHandValue();
+        if (playerHandValue > 21) {
+            System.out.println("Player busts! Dealer wins.");
+            showBustMessage();
+            endGame();
+        }
     }
 
-    //Stand logic
+    // Message for when player busts
+    private void showBustMessage() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText("Player Busted!");
+        alert.setContentText("Your hand value exceeded 21. You lose.");
+        alert.showAndWait();
+    }
+
+    //Ending the game, reset
+    private void endGame() {
+        // Clear player and dealer hands
+        player.clearHand();
+        dealerHand.clear();
+
+        // Clear card images from the board
+        PlayerCard1.setImage(null);
+        PlayerCard2.setImage(null);
+        PlayerCard3.setImage(null);
+        PlayerCard4.setImage(null);
+        DealerCard1.setImage(null);
+        DealerCard2.setImage(null);
+        DealerCard3.setImage(null);
+        DealerCard4.setImage(null);
+
+        // Create a new deck, shuffle it
+        // Make sure buttons are activated
+        deck = new Deck();
+        deck.shuffle();
+        setButtonState(true);
+
+        System.out.println("Game has been reset. Start a new round!");
+    }
+
+    //Stand logic & Dealer's turn logic
     @FXML
     public void stand() {
-        DealerCard2.setImage(getCardImage(dealerHand.get(1))); // Reveal dealer's second card
+        disableActionButtons(true);
+        // Reveal the dealer's second card
+        DealerCard2.setImage(getCardImage(dealerHand.get(1)));
 
-        while (getDealerHandValue() < 17) {
+        // Dealer's turn logic
+        while (getDealerHandValue() < 17 ||
+                (getDealerHandValue() <= player.calculateHandValue() && getDealerHandValue() <= 21)) {
             Card newCard = deck.dealCard();
             dealerHand.add(newCard);
-
             if (DealerCard3.getImage() == null) {
                 DealerCard3.setImage(getCardImage(newCard));
             } else if (DealerCard4.getImage() == null) {
                 DealerCard4.setImage(getCardImage(newCard));
+            } else {
+                System.out.println("Maximum cards reached for the dealer.");
             }
         }
-
         determineWinner();
     }
 
-    //Get the value of the dealers hand
+    //Calculate the dealers hand
     private int getDealerHandValue() {
         int handValue = 0;
         int aceCount = 0;
@@ -175,6 +230,13 @@ public class BlackjackController {
         return handValue;
     }
 
+    //Disable buttons once player stands
+    private void disableActionButtons(boolean disable) {
+        Hit.setDisable(disable);
+        Stand.setDisable(disable);
+        DoubleDown.setDisable(disable);
+    }
+
     //Get the value of a card
     private int getCardValue(Card card) {
         return switch (card.getValue()) {
@@ -192,20 +254,46 @@ public class BlackjackController {
         };
     }
 
-    //Determine the winner
+    //Game over message
+    private void showGameOverMessage(String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game Over");
+        alert.setHeaderText("Result");
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    //Determine winner logic and give message
     private void determineWinner() {
         int playerValue = player.calculateHandValue();
         int dealerValue = getDealerHandValue();
 
         if (playerValue > 21) {
             System.out.println("Player busts! Dealer wins.");
-        } else if (dealerValue > 21 || playerValue > dealerValue) {
+            showGameOverMessage("You lose! Player busted.");
+        } else if (dealerValue > 21) {
+            System.out.println("Dealer busts! Player wins.");
+            showGameOverMessage("You win! Dealer busted.");
+        } else if (playerValue > dealerValue) {
             System.out.println("Player wins!");
-        } else if (playerValue < dealerValue) {
+            showGameOverMessage("You win! Your hand is better.");
+        } else if (dealerValue > playerValue) {
             System.out.println("Dealer wins!");
+            showGameOverMessage("You lose! Dealer's hand is better.");
         } else {
             System.out.println("It's a tie!");
+            showGameOverMessage("It's a tie!");
         }
+        // Reset game
+        endGame();
+    }
+
+    //Make sure buttons are enabled
+    private void setButtonState(boolean enable) {
+        Hit.setDisable(!enable);
+        Stand.setDisable(!enable);
+        DoubleDown.setDisable(!enable);
+        Bet.setDisable(!enable);
     }
 
     //Start the next round
@@ -222,6 +310,8 @@ public class BlackjackController {
         deck.shuffle();
         player.clearHand();
         dealerHand.clear();
+
+        setButtonState(true);
 
         System.out.println("New round started!");
     }

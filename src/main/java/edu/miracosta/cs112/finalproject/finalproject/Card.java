@@ -1,5 +1,4 @@
 package edu.miracosta.cs112.finalproject.finalproject;
-
 //Create the deck of cards
 //Create the value, set, and get
 //Concrete Class!!!
